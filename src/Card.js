@@ -1,7 +1,5 @@
 const Card = ({ src, name, codeName }) => (
-  <li>
-    <img src={src} alt={codeName} placeholder={name} />
-  </li>
+  <img src={src} alt={codeName} placeholder={name} />
 );
 
 export default Card;

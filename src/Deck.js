@@ -6,41 +6,40 @@ import Card from './Card.js';
 const BASE_URL = 'http://deckofcardsapi.com/api/deck/';
 
 const Deck = () => {
-  const [deckId, setDeckId] = useState(0);
+  const [deckId, setDeckId] = useState("");
   const [remaining, setRemaining] = useState(0);
-  const [cards, setCards] = useState([]);
+  const [card, setCard] = useState({});
 
   useEffect(function fetchDeckOnStart() {
     async function fetchDeck() {
       const { data } = await axios.get(`${BASE_URL}new/shuffle/?deck_count=1`);
       setDeckId(data.deck_id);
       setRemaining(data.remaining);
-      console.log(deckId);
     }
     fetchDeck();
   }, []);
 
   const draw = async () => {
-    if (remaining === 0) return;
+    if (remaining <= 1) {
+      window.alert('Error: no cards remaining!');
+      return;
+    }
     const { data } = await axios.get(`${BASE_URL}${deckId}/draw/?count=1`);
-    const card = data.cards[0];
-    setCards(cards => [...cards, card]);
+    setCard(data.cards[0]);
     setRemaining(data.remaining);
   };
 
   return (
     <>
-      <button onClick={() => draw()}>Draw</button>
-      <ul>
-        {cards.map(({ image, code, value, suit }) => (
-          <Card
-            src={image}
-            name={`${value} of ${suit}`}
-            key={uuid()}
-            codeName={code}
-          />
-        ))}
-      </ul>
+      <div>
+        <button onClick={draw}>Draw</button>
+      </div>
+      <Card
+        src={card.image}
+        name={`${card.value} of ${card.suit}`}
+        key={uuid()}
+        codeName={card.code}
+      />
     </>
   );
 };
